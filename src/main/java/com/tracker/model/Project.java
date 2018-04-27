@@ -23,9 +23,11 @@ public class Project {
     private Long id;
 
     @NotEmpty
+    @Column(length = 500)
     private String name;
 
     @NotEmpty
+    @Column(length = 1000)
     private String description;
 
     @JsonIgnore

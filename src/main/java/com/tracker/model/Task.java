@@ -20,6 +20,7 @@ public class Task {
     private Long id;
 
     @NotEmpty
+    @Column(length = 500)
     private String name;
 
     @NotEmpty

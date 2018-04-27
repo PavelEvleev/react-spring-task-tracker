@@ -19,6 +19,7 @@ public class Comment {
     private Long id;
 
     @NotEmpty
+    @Column(length = 1000)
     private String text;
 
     @NotNull
