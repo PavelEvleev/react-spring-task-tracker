@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,18 +58,21 @@ public class ApiController {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     @PostMapping(value = "/employee/create/project")
     public ResponseEntity<Project> createProject(@RequestBody ProjectCommand project) {
         Project result = applicationService.createNewProject(project);
         return ResponseEntity.ok(result);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_DEVELOPER','ROLE_MANAGER')")
     @PostMapping(value = "/projects/create/task")
     public ResponseEntity<Task> createTaskInProject(@RequestBody TaskCommand task) {
         Task result = applicationService.createNewTask(task);
         return ResponseEntity.ok(result);
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     @PostMapping(value = "/add/developer/project")
     public ResponseEntity addDeveloperToProject(@RequestParam Long devId, @RequestParam Long projectId) {
         return applicationService.addDeveloperToProject(devId, projectId)
@@ -78,6 +82,7 @@ public class ApiController {
                 HttpStatus.CONFLICT);
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     @GetMapping("/employees/developer/search")
     public ResponseEntity<List<Employee>> searchDeveloper(@RequestParam String name, @RequestParam String surname) {
         if (name.isEmpty() && surname.isEmpty())
@@ -85,6 +90,7 @@ public class ApiController {
         return ResponseEntity.ok(applicationService.searchDeveloper(name, surname));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_DEVELOPER','ROLE_MANAGER')")
     @PatchMapping(value = "/task")
     public ResponseEntity patchTask(@RequestBody UpdateStatus updates) {
         applicationService.patchTask(updates);
@@ -96,6 +102,7 @@ public class ApiController {
         return ResponseEntity.ok(applicationService.getParticipants(id, pageRequest));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_DEVELOPER','ROLE_MANAGER')")
     @PostMapping(value = "/comments/update")
     public ResponseEntity<Comment> updateComment(@RequestBody Comment comment) {
         return ResponseEntity.ok(applicationService.updateComment(comment));
@@ -111,11 +118,13 @@ public class ApiController {
         return ResponseEntity.ok(applicationService.getResposibleDevForTask(id));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_DEVELOPER','ROLE_MANAGER')")
     @PostMapping(value = "/tasks/employee/comment")
     public ResponseEntity<Comment> addComment(@RequestBody CommentCommand comment) {
         return ResponseEntity.ok(applicationService.addComment(comment));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_DEVELOPER','ROLE_MANAGER')")
     @DeleteMapping("/api/comments/{id}")
     public ResponseEntity deleteComment(@PathVariable Long id) {
         applicationService.deleteComment(id);
