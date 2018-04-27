@@ -1,0 +1,1 @@
+export default status = ["WAITING", "IMPLEMENTATION", "VERIFYING", "RELEASING"];

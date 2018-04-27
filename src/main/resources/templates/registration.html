@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .form {
+            max-width: 250px;
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="form">
+    <label for="name">Имя</label>
+    <input type="text" id="name"/>
+    <h2 id="validName"></h2>
+
+    <label for="surname">Фамилия</label>
+    <input type="text" id="surname"/>
+    <h2 id="validSurname"></h2>
+
+    <label for="email">Email</label>
+    <input type="text" id="email"/>
+    <h2 id="validEmail"></h2>
+
+    <label for="password">Пароль</label>
+    <input type="password" id="password"/>
+    <h2 id="validPassword"></h2>
+
+    <div><input type="radio" name="role" value="MANAGER">Manager</div>
+    <div><input type="radio" name="role" checked value="DEVELOPER">Developer</div>
+
+    <button onclick="send()">Зарегестрироваться</button>
+    <button onclick="singIn()">Войти</button>
+</div>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script>
+    function singIn() {
+        window.location.href = "/login";
+    }
+    function validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return email.match(re);
+    }
+    function send() {
+        var $validEmail = $('#validEmail');
+        $validEmail.text("");
+
+        var $validSurname = $('#validSurname');
+        $validSurname.text("");
+
+        var $validName = $('#validName');
+        $validName.text("");
+
+        var $validPassword = $('#validPassword');
+        $validPassword.text("");
+
+        const name = $('#name').val();
+        const surname = $('#surname').val();
+        const password = $('#password').val();
+        var email = $('#email').val();
+
+        if (name.length < 2) {
+            $validName.text(name + " is short :(");
+            $validName.css("color", "red");
+        }
+        if (surname.length < 2) {
+            $validSurname.text(surname + " is short :(");
+            $validSurname.css("color", "red");
+        }
+         if (validateEmail(email)) {
+            $validEmail.text(email + " is valid :)");
+            $validEmail.css("color", "green");
+        } else {
+            $validEmail.text(email + " is not valid :(");
+            $validEmail.css("color", "red");
+        }
+        if (password.length < 10) {
+            $validPassword.text(password + " is short, length must be more than 10  :)");
+            $validPassword.css("color", "red");
+        }
+        if ($validEmail.css("color") === "rgb(255, 0, 0)" || $validName.text().length > 0 || $validPassword.text().length > 0 || $validSurname.text().length > 0) {
+            console.log("not valid");
+            return;
+        } else {
+            var data = {
+                name: document.getElementById("name").value,
+                surname: document.getElementById("surname").value,
+                password: document.getElementById("password").value,
+                email: document.getElementById("email").value,
+                role: $("input[type='radio']:checked").val()
+            };
+            console.log(data);
+            $.ajax({
+                url: "/api/registration",
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                processData: false,
+                success: function (data, textStatus, jQxhr) {
+                    alert(JSON.stringify(data));
+                },
+                error: function (jqXhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                }
+            });
+        }
+
+
+    }
+</script>
+</body>
+</html>
